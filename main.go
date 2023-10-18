@@ -21,7 +21,9 @@ func main() {
 
 	switch command {
 	case "add":
-		gui.Add(*isUrgent, flag.Args())
+		gui.Add(*isUrgent)
+	case "delete":
+		gui.Delete(*isUrgent)
 	}
 
 }

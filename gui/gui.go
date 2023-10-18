@@ -19,7 +19,7 @@ func closeFile(file *os.File) {
 	}
 }
 
-func Add(isUrgent bool, Args []string) {
+func Add(isUrgent bool) {
 	defer closeFile(file)
 
 	reader := bufio.NewReader(os.Stdin)
@@ -38,4 +38,37 @@ func Add(isUrgent bool, Args []string) {
 	myTodos.SaveTodo(file)
 
 	fmt.Println("\nAdded todo:", flag.Arg(1))
+}
+
+func Delete(isUrgent bool) {
+	defer closeFile(file)
+
+	reader := bufio.NewReader(os.Stdin)
+
+	err := myTodos.DeleteTodo(flag.Arg(1))
+	if err != nil {
+		res, ok := todos.ERRORS[err.Error()]
+		if ok {
+			fmt.Println(res)
+		} else {
+			fmt.Println("jumm", err)
+		}
+		return
+	}
+
+	fmt.Print("Are sure want to delete this todo? (y/n): ")
+
+	option, _ := reader.ReadString('\n')
+	option = strings.TrimSpace(option)
+	option = strings.ToLower(option)
+
+	if option != "y" {
+		fmt.Println("\nNo se elimino la monda esa por subnormal")
+		return
+	}
+
+	myTodos.SaveTodo(file)
+
+	fmt.Println("Bueno se fue la tarea")
+
 }
