@@ -11,13 +11,13 @@ import (
 )
 
 func main() {
-	isUrgent := flag.Bool("urgent", false, "Marca la tarea como prioritaria.")
+	isUrgent := flag.Bool("u", false, "Marca la tarea como prioritaria.")
 	flag.Parse()
 
 	command := flag.Arg(0)
 
 	if len(flag.Args()) < 2 {
-		fmt.Println(`Use: dieGo [--urgent] <command> [arg]`)
+		fmt.Println(`Use: dieGo [-u] <command> [arg]`)
 		fmt.Println(*isUrgent)
 		return
 	}
@@ -44,13 +44,8 @@ func main() {
 			panic(err)
 		}
 
-		if *isUrgent {
-			myTodos.UrgentTodos = todos.AddTodo(myTodos, newTodo, *isUrgent)
-		} else {
-			myTodos.NormalTodos = todos.AddTodo(myTodos, newTodo, *isUrgent)
-		}
-
-		todos.SaveTodo(file, myTodos)
+		myTodos.AddTodo(newTodo, *isUrgent)
+		myTodos.SaveTodo(file)
 
 		fmt.Println("\nAdded todo:", flag.Arg(1))
 	}

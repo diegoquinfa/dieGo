@@ -39,18 +39,18 @@ func NewTodo(name, description string) (*Todo, error) {
 	}, nil
 }
 
-func AddTodo(todos *TodoJson, newTodo *Todo, isUrgent bool) []Todo {
-	newTodo.Id = getLastId(todos, isUrgent) + 1
+func (tj *TodoJson) AddTodo(newTodo *Todo, isUrgent bool) {
+	newTodo.Id = tj.getLastId(isUrgent) + 1
 
 	if isUrgent {
-		return append(todos.UrgentTodos, *newTodo)
+		tj.UrgentTodos = append(tj.UrgentTodos, *newTodo)
 	} else {
-		return append(todos.NormalTodos, *newTodo)
+		tj.NormalTodos = append(tj.NormalTodos, *newTodo)
 	}
 }
 
-func SaveTodo(file *os.File, todos *TodoJson) {
-	bytes, err := json.Marshal(todos)
+func (tj *TodoJson) SaveTodo(file *os.File) {
+	bytes, err := json.Marshal(tj)
 	if err != nil {
 		panic(err)
 	}
@@ -112,10 +112,10 @@ func OpenTodosFile() (*os.File, *TodoJson, error) {
 	return file, &todos, err
 }
 
-func getLastId(todos *TodoJson, isUrgent bool) int {
+func (tj *TodoJson) getLastId(isUrgent bool) int {
 	if isUrgent {
-		return len(todos.UrgentTodos)
+		return len(tj.UrgentTodos)
 	}
 
-	return len(todos.NormalTodos)
+	return len(tj.NormalTodos)
 }
