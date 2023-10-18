@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -21,62 +22,6 @@ type Todo struct {
 type TodoJson struct {
 	UrgentTodos []Todo `json:"urgentTodos"`
 	NormalTodos []Todo `json:"normalTodos"`
-}
-
-func NewTodo(name, description string) (*Todo, error) {
-	if name == "" || description == "" {
-		return nil, fmt.Errorf("NEW_TODO_FORMAT_ERROR")
-	}
-
-	now := time.Now().Format("02/01/2006 - 15:04")
-
-	return &Todo{
-		Name:        name,
-		Description: description,
-		Complete:    false,
-		CreatedAt:   now,
-		UpdatedAt:   now,
-	}, nil
-}
-
-func (tj *TodoJson) AddTodo(newTodo *Todo, isUrgent bool) {
-	newTodo.Id = tj.getLastId(isUrgent) + 1
-
-	if isUrgent {
-		tj.UrgentTodos = append(tj.UrgentTodos, *newTodo)
-	} else {
-		tj.NormalTodos = append(tj.NormalTodos, *newTodo)
-	}
-}
-
-func (tj *TodoJson) SaveTodo(file *os.File) {
-	bytes, err := json.Marshal(tj)
-	if err != nil {
-		panic(err)
-	}
-
-	_, err = file.Seek(0, 0)
-	if err != nil {
-		panic(err)
-	}
-
-	file.Truncate(0)
-	if err != nil {
-		panic(err)
-	}
-
-	writer := bufio.NewWriter(file)
-	_, err = writer.Write(bytes)
-
-	if err != nil {
-		panic(err)
-	}
-
-	err = writer.Flush()
-
-	if err != nil {
-		panic(err)
-	}
 }
 
 func OpenTodosFile() (*os.File, *TodoJson, error) {
@@ -110,6 +55,95 @@ func OpenTodosFile() (*os.File, *TodoJson, error) {
 	}
 
 	return file, &todos, err
+}
+
+func NewTodo(name, description string) (*Todo, error) {
+	if name == "" || description == "" {
+		return nil, fmt.Errorf("NEW_TODO_FORMAT_ERROR")
+	}
+
+	now := time.Now().Format("02/01/2006 - 15:04")
+
+	return &Todo{
+		Name:        name,
+		Description: description,
+		Complete:    false,
+		CreatedAt:   now,
+		UpdatedAt:   now,
+	}, nil
+}
+
+func (tj *TodoJson) AddTodo(newTodo *Todo, isUrgent bool) {
+	newTodo.Id = tj.getLastId(isUrgent) + 1
+
+	if isUrgent {
+		tj.UrgentTodos = append(tj.UrgentTodos, *newTodo)
+	} else {
+		tj.NormalTodos = append(tj.NormalTodos, *newTodo)
+	}
+}
+
+func (tj *TodoJson) DeleteTodo(deleteId string) error {
+	var (
+		todoList *[]Todo
+		id       int
+		err      error
+	)
+
+	if deleteId[0] == 'U' {
+		id, err = strconv.Atoi(deleteId[1:])
+		todoList = &tj.UrgentTodos
+
+	} else {
+		id, err = strconv.Atoi(deleteId)
+		todoList = &tj.NormalTodos
+	}
+
+	if err != nil {
+		return fmt.Errorf("FORMAT_ID_INVALID")
+	}
+
+	todoListCopy := make([]Todo, len(*todoList))
+	copy(todoListCopy, *todoList)
+
+	for i, todo := range *todoList {
+		if todo.Id == id {
+			*todoList = append(todoListCopy[:i], todoListCopy[i+1:]...)
+			return nil
+		}
+	}
+
+	return fmt.Errorf("DONT_EXIST_TODO")
+}
+
+func (tj *TodoJson) SaveTodo(file *os.File) {
+	bytes, err := json.Marshal(tj)
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = file.Seek(0, 0)
+	if err != nil {
+		panic(err)
+	}
+
+	file.Truncate(0)
+	if err != nil {
+		panic(err)
+	}
+
+	writer := bufio.NewWriter(file)
+	_, err = writer.Write(bytes)
+
+	if err != nil {
+		panic(err)
+	}
+
+	err = writer.Flush()
+
+	if err != nil {
+		panic(err)
+	}
 }
 
 func (tj *TodoJson) getLastId(isUrgent bool) int {
