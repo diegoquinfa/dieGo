@@ -31,7 +31,8 @@ func Add(isUrgent bool) {
 	todoName := flag.Arg(1)
 	newTodo, err := todos.NewTodo(todoName, description)
 	if err != nil {
-		panic(err)
+		fmt.Println("Error:", err)
+		return
 	}
 
 	myTodos.AddTodo(newTodo, isUrgent)
@@ -47,12 +48,7 @@ func Delete(isUrgent bool) {
 
 	err := myTodos.DeleteTodo(flag.Arg(1))
 	if err != nil {
-		res, ok := todos.ERRORS[err.Error()]
-		if ok {
-			fmt.Println(res)
-		} else {
-			fmt.Println("jumm", err)
-		}
+		fmt.Println("Error:", err)
 		return
 	}
 
@@ -70,5 +66,24 @@ func Delete(isUrgent bool) {
 	myTodos.SaveTodo(file)
 
 	fmt.Println("Bueno se fue la tarea")
+}
 
+func List() {
+	fmt.Println("                  Urgent todo")
+	fmt.Println(" id     nombre    descripción      fecha de creación")
+	for _, todo := range myTodos.UrgentTodos {
+		status := " "
+		if todo.Complete {
+			status = "✔️"
+		}
+		fmt.Printf("[%s] -> %s | %s | %s \n", status, todo.Name, todo.Description, todo.CreatedAt)
+	}
+
+	for _, todo := range myTodos.NormalTodos {
+		status := " "
+		if todo.Complete {
+			status = "✔️"
+		}
+		fmt.Printf("[%s] -> %s | %s | %s", status, todo.Name, todo.Description, todo.CreatedAt)
+	}
 }

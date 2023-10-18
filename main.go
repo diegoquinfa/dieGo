@@ -13,9 +13,8 @@ func main() {
 
 	command := flag.Arg(0)
 
-	if len(flag.Args()) < 2 {
+	if len(flag.Args()) < 1 {
 		fmt.Println(`Use: dieGo [-u] <command> [arg]`)
-		fmt.Println(*isUrgent)
 		return
 	}
 
@@ -24,6 +23,8 @@ func main() {
 		gui.Add(*isUrgent)
 	case "delete":
 		gui.Delete(*isUrgent)
+	case "list":
+		gui.List()
 	}
 
 }

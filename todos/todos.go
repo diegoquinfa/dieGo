@@ -3,7 +3,6 @@ package todos
 import (
 	"bufio"
 	"encoding/json"
-	"fmt"
 	"io"
 	"os"
 	"strconv"
@@ -59,7 +58,7 @@ func OpenTodosFile() (*os.File, *TodoJson, error) {
 
 func NewTodo(name, description string) (*Todo, error) {
 	if name == "" || description == "" {
-		return nil, fmt.Errorf("NEW_TODO_FORMAT_ERROR")
+		return nil, &NEW_TODO_FORMAT_ERROR{}
 	}
 
 	now := time.Now().Format("02/01/2006 - 15:04")
@@ -100,7 +99,7 @@ func (tj *TodoJson) DeleteTodo(deleteId string) error {
 	}
 
 	if err != nil {
-		return fmt.Errorf("FORMAT_ID_INVALID")
+		return &DONT_EXIST_TODO{}
 	}
 
 	todoListCopy := make([]Todo, len(*todoList))
@@ -113,7 +112,7 @@ func (tj *TodoJson) DeleteTodo(deleteId string) error {
 		}
 	}
 
-	return fmt.Errorf("DONT_EXIST_TODO")
+	return &DONT_EXIST_TODO{}
 }
 
 func (tj *TodoJson) SaveTodo(file *os.File) {
@@ -148,8 +147,8 @@ func (tj *TodoJson) SaveTodo(file *os.File) {
 
 func (tj *TodoJson) getLastId(isUrgent bool) int {
 	if isUrgent {
-		return len(tj.UrgentTodos)
+		return tj.UrgentTodos[len(tj.UrgentTodos)-1].Id
 	}
 
-	return len(tj.NormalTodos)
+	return tj.NormalTodos[len(tj.NormalTodos)-1].Id
 }
