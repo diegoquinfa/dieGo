@@ -115,6 +115,41 @@ func (tj *TodoJson) DeleteTodo(deleteId string) error {
 	return &DONT_EXIST_TODO{}
 }
 
+func (tj *TodoJson) CompleteTodo(updateId string) error {
+	var (
+		id  int
+		err error
+	)
+
+	if updateId[0] == 'U' {
+		id, err = strconv.Atoi(updateId[1:])
+		for i, todo := range tj.UrgentTodos {
+			if todo.Id == id {
+				todo.Complete = !todo.Complete
+				tj.UrgentTodos[i].Complete = !todo.Complete
+
+				tj.UrgentTodos[i].UpdatedAt = time.Now().Format("02/01/2006 - 15:04")
+				return nil
+			}
+		}
+	} else {
+		id, err = strconv.Atoi(updateId)
+		for i, todo := range tj.NormalTodos {
+			if todo.Id == id {
+				tj.NormalTodos[i].Complete = !todo.Complete
+				tj.NormalTodos[i].UpdatedAt = time.Now().Format("02/01/2006 - 15:04")
+				return nil
+			}
+		}
+	}
+
+	if err != nil {
+		return &DONT_EXIST_TODO{}
+	}
+
+	return &DONT_EXIST_TODO{}
+}
+
 func (tj *TodoJson) SaveTodo(file *os.File) {
 	bytes, err := json.Marshal(tj)
 	if err != nil {
@@ -147,7 +182,15 @@ func (tj *TodoJson) SaveTodo(file *os.File) {
 
 func (tj *TodoJson) getLastId(isUrgent bool) int {
 	if isUrgent {
+		if len(tj.UrgentTodos) == 0 {
+			return 0
+		}
+
 		return tj.UrgentTodos[len(tj.UrgentTodos)-1].Id
+	}
+
+	if len(tj.NormalTodos) == 0 {
+		return 0
 	}
 
 	return tj.NormalTodos[len(tj.NormalTodos)-1].Id

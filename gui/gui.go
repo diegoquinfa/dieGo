@@ -5,9 +5,17 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
+	"github.com/diegoquinfa/dieGo/table"
 	"github.com/diegoquinfa/dieGo/todos"
+)
+
+const (
+	red        = "\x1b[31m"
+	green      = "\x1b[32m"
+	clearColor = "\x1b[0m"
 )
 
 var file, myTodos, _ = todos.OpenTodosFile()
@@ -69,21 +77,127 @@ func Delete(isUrgent bool) {
 }
 
 func List() {
-	fmt.Println("                  Urgent todo")
-	fmt.Println(" id     nombre    descripción      fecha de creación")
+	fmt.Println("\nUrgent Todo")
+	urgentTodosRows := []table.Row{}
+	urgentTodosRows = append(
+		urgentTodosRows,
+		*table.NewRow("Id", "Status", "Name", "Create at"),
+	)
+
 	for _, todo := range myTodos.UrgentTodos {
-		status := " "
+		status := "\x1b[31m" + "Uncomplete" + "\x1b[0m"
 		if todo.Complete {
-			status = "✔️"
+			status = "\x1b[32m" + "Complete" + "\x1b[0m"
 		}
-		fmt.Printf("[%s] -> %s | %s | %s \n", status, todo.Name, todo.Description, todo.CreatedAt)
+		id := "U" + fmt.Sprintf("%d", todo.Id)
+		urgentTodosRows = append(
+			urgentTodosRows,
+			*table.NewRow(id, status, todo.Name, todo.CreatedAt),
+		)
 	}
 
+	table.CreateTable(urgentTodosRows)
+
+	normalTodosRows := []table.Row{}
+	normalTodosRows = append(
+		normalTodosRows,
+		*table.NewRow("Id", "Status", "Name", "Create at"),
+	)
+
 	for _, todo := range myTodos.NormalTodos {
-		status := " "
+		status := red + "Uncomplete" + clearColor
 		if todo.Complete {
-			status = "✔️"
+			status = green + "Complete" + clearColor
 		}
-		fmt.Printf("[%s] -> %s | %s | %s", status, todo.Name, todo.Description, todo.CreatedAt)
+		normalTodosRows = append(
+			normalTodosRows,
+			*table.NewRow(todo.Id, status, todo.Name, todo.CreatedAt),
+		)
+	}
+
+	fmt.Println("\nNormal Todo")
+	table.CreateTable(normalTodosRows)
+}
+
+func Complete() {
+	defer closeFile(file)
+
+	err := myTodos.CompleteTodo(flag.Arg(1))
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	myTodos.SaveTodo(file)
+	fmt.Println("Todo was update!")
+}
+
+func Details() {
+
+	detailId := flag.Arg(1)
+
+	if detailId[0] == 'U' {
+		id, err := strconv.Atoi(detailId[1:])
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		for _, todo := range myTodos.UrgentTodos {
+			if todo.Id == id {
+				urgentTodosRows := []table.Row{}
+				urgentTodosRows = append(
+					urgentTodosRows,
+					*table.NewRow("Id", "Status", "Name", "Description", "Create at",
+						"Update at",
+					),
+				)
+
+				status := red + "Uncomplete" + clearColor
+				if todo.Complete {
+					status = red + "Complete" + clearColor
+				}
+				id := "U" + fmt.Sprintf("%d", todo.Id)
+				urgentTodosRows = append(
+					urgentTodosRows,
+					*table.NewRow(id, status, todo.Name, todo.Description,
+						todo.CreatedAt, todo.UpdatedAt,
+					),
+				)
+
+				table.CreateTable(urgentTodosRows)
+				return
+			}
+		}
+	} else {
+		id, err := strconv.Atoi(detailId)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		for _, todo := range myTodos.NormalTodos {
+			if todo.Id == id {
+				normalTodosRows := []table.Row{}
+				normalTodosRows = append(
+					normalTodosRows,
+					*table.NewRow("Id", "Status", "Name", "Description", "Create at",
+						"Update at",
+					),
+				)
+
+				status := red + "Uncomplete" + clearColor
+				if todo.Complete {
+					status = green + "Complete" + clearColor
+				}
+				normalTodosRows = append(
+					normalTodosRows,
+					*table.NewRow(todo.Id, status, todo.Name, todo.Description,
+						todo.CreatedAt, todo.UpdatedAt,
+					),
+				)
+
+				table.CreateTable(normalTodosRows)
+				return
+			}
+		}
 	}
 }

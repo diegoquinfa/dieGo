@@ -1,6 +1,9 @@
 package table
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 const (
 	ESQUINA_INF_DER = "┘"
@@ -24,8 +27,6 @@ type Row struct {
 	Columns      []any
 	maxLenColumn []int
 }
-
-type Table struct{}
 
 func GetMaxWidthColumns(rows []Row) []int {
 	maxWidths := make([]int, len(rows[0].maxLenColumn))
@@ -65,7 +66,7 @@ func CreateTable(rows []Row) {
 		if i == 0 {
 			for j, column := range row.Columns {
 				text := fmt.Sprintf("%v", column)
-				len := maxWidths[j] - len([]rune(text))
+				len := maxWidths[j] - row.maxLenColumn[j]
 				fmt.Printf("%s %s", PARED_VERTICAL, text)
 				for k := 0; k < len+1; k++ {
 					fmt.Print(" ")
@@ -88,7 +89,7 @@ func CreateTable(rows []Row) {
 
 		for j, column := range row.Columns {
 			text := fmt.Sprintf("%v", column)
-			spaces := maxWidths[j] - len([]rune(text))
+			spaces := maxWidths[j] - row.maxLenColumn[j]
 			fmt.Printf("%s %s", PARED_VERTICAL, text)
 			for k := 0; k < spaces+1; k++ {
 				fmt.Print(" ")
@@ -96,17 +97,17 @@ func CreateTable(rows []Row) {
 		}
 		fmt.Println(PARED_VERTICAL)
 
-		// if i != len(rows)-1 {
-		// 	for j := range row.Columns {
-		// 		fmt.Printf("%s", PARED_VERTICAL)
-		// 		spaces := maxWidths[j]
-		// 		for k := 0; k < spaces+2; k++ {
-		// 			fmt.Print(" ")
-		// 		}
-		// 	}
+		if i != len(rows)-1 {
+			for j := range row.Columns {
+				fmt.Printf("%s", PARED_VERTICAL)
+				spaces := maxWidths[j]
+				for k := 0; k < spaces+2; k++ {
+					fmt.Print(" ")
+				}
+			}
 
-		// 	fmt.Println(PARED_VERTICAL)
-		// }
+			fmt.Println(PARED_VERTICAL)
+		}
 	}
 
 	fmt.Print(ESQUINA_INF_IZQ)
@@ -127,7 +128,11 @@ func NewRow(columns ...any) *Row {
 	row.Columns = append(row.Columns, columns...)
 
 	for i := range row.Columns {
-		lenText := len(fmt.Sprintf("%v", columns[i]))
+		text := fmt.Sprintf("%v", columns[i])
+		lenText := len([]rune(text))
+		if strings.Contains(text, "\x1b[31m") || strings.Contains(text, "\x1b[32m") {
+			lenText -= 9
+		}
 		row.maxLenColumn = append(row.maxLenColumn, lenText)
 	}
 

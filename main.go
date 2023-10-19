@@ -25,6 +25,10 @@ func main() {
 		gui.Delete(*isUrgent)
 	case "list":
 		gui.List()
+	case "complete":
+		gui.Complete()
+	case "details":
+		gui.Details()
 	}
 
 }
