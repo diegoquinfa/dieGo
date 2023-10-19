@@ -125,9 +125,7 @@ func (tj *TodoJson) CompleteTodo(updateId string) error {
 		id, err = strconv.Atoi(updateId[1:])
 		for i, todo := range tj.UrgentTodos {
 			if todo.Id == id {
-				todo.Complete = !todo.Complete
-				tj.UrgentTodos[i].Complete = !todo.Complete
-
+				tj.UrgentTodos[i].Complete = true
 				tj.UrgentTodos[i].UpdatedAt = time.Now().Format("02/01/2006 - 15:04")
 				return nil
 			}
@@ -136,7 +134,7 @@ func (tj *TodoJson) CompleteTodo(updateId string) error {
 		id, err = strconv.Atoi(updateId)
 		for i, todo := range tj.NormalTodos {
 			if todo.Id == id {
-				tj.NormalTodos[i].Complete = !todo.Complete
+				tj.NormalTodos[i].Complete = true
 				tj.NormalTodos[i].UpdatedAt = time.Now().Format("02/01/2006 - 15:04")
 				return nil
 			}
