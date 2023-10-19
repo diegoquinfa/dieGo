@@ -29,6 +29,8 @@ func main() {
 		gui.Complete()
 	case "details":
 		gui.Details()
+	default:
+		fmt.Println(`Use: dieGo [-u] <command> [arg]`)
 	}
 
 }

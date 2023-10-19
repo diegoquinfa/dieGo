@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 )
@@ -24,7 +25,17 @@ type TodoJson struct {
 }
 
 func OpenTodosFile() (*os.File, *TodoJson, error) {
-	file, err := os.OpenFile("todos.json", os.O_RDWR|os.O_CREATE, 0666)
+	basePath, err := os.UserHomeDir()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// Ruta relativa que deseas unir a la ruta base
+	relativePath := "go/bin/todos.json"
+
+	// Construir la ruta completa
+	fullPath := filepath.Join(basePath, relativePath)
+	file, err := os.OpenFile(fullPath, os.O_RDWR|os.O_CREATE, 0666)
 
 	if err != nil {
 		return nil, nil, err
