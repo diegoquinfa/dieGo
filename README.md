@@ -66,13 +66,13 @@ Example:
     dieGo details 1
     ```
 ## Add task:
-<img src="https://res.cloudinary.com/drvoywub5/image/upload/v1697928712/github/dieGo/dhfgohtbhyuiwq10ohtq.png">
+<img src="https://res.cloudinary.com/drvoywub5/image/upload/v1697928712/github/dieGo/dhfgohtbhyuiwq10ohtq.png" style="width=100%">
 
 ## Complete taks:
-<img src="https://res.cloudinary.com/drvoywub5/image/upload/v1697928712/github/dieGo/krrhyuovjk9jzbjudev5.png">
+<img src="https://res.cloudinary.com/drvoywub5/image/upload/v1697928712/github/dieGo/krrhyuovjk9jzbjudev5.png" style="width=100%">
 
 ## Task details:
-<img src="https://res.cloudinary.com/drvoywub5/image/upload/v1697929664/github/dieGo/ezbptwva5akl4qo4x1sr.png">
+<img src="https://res.cloudinary.com/drvoywub5/image/upload/v1697929664/github/dieGo/ezbptwva5akl4qo4x1sr.png" style="width=100%">
 
 ## License
 
