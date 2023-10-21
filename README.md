@@ -65,14 +65,22 @@ Example:
     ```bash
     dieGo details 1
     ```
+    
 ## Add task:
-<img src="https://res.cloudinary.com/drvoywub5/image/upload/v1697928712/github/dieGo/dhfgohtbhyuiwq10ohtq.png" style="width=100%">
+<div align="center">
+<img src="https://res.cloudinary.com/drvoywub5/image/upload/v1697928712/github/dieGo/dhfgohtbhyuiwq10ohtq.png" width=80%>
+</div>
 
 ## Complete taks:
-<img src="https://res.cloudinary.com/drvoywub5/image/upload/v1697928712/github/dieGo/krrhyuovjk9jzbjudev5.png" style="width=100%">
+<div align="center">
+<img src="https://res.cloudinary.com/drvoywub5/image/upload/v1697928712/github/dieGo/krrhyuovjk9jzbjudev5.png" width=80%>
+</div>
 
 ## Task details:
-<img src="https://res.cloudinary.com/drvoywub5/image/upload/v1697929664/github/dieGo/ezbptwva5akl4qo4x1sr.png" style="width=100%">
+<div align="center">
+<img src="https://res.cloudinary.com/drvoywub5/image/upload/v1697929664/github/dieGo/ezbptwva5akl4qo4x1sr.png" width=80%>
+</div>
+
 
 ## License
 
